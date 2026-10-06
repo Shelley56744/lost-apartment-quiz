@@ -1880,7 +1880,7 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
     });
   };
   const others = ORDER.filter((k) => k !== resultKey);
-  const [tab, setTab] = useState("room"); // room | support
+  const [tab, setTab] = useState("room"); // room | others（屬於「你的房間」，不顯示在分頁列）| support
   const sectionRef = useRef(null);
   const switchTab = (id) => {
     if (id === tab) return;
@@ -1936,8 +1936,8 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
       </div>
 
       {/* 左欄：拍立得、Hashtag（電腦版固定在左邊） */}
-      {tab === "room" && (
-      <div className="space-y-4 lg:sticky lg:top-24 lg:col-span-5 lg:self-start lg:space-y-6">
+      {tab !== "support" && (
+      <div className={`${tab === "room" ? "" : "hidden lg:block"} space-y-4 lg:sticky lg:top-24 lg:col-span-5 lg:self-start lg:space-y-6`}>
 
         {/* 拍立得卡 */}
         <div className="la-fade-up mx-auto w-[68%] max-w-[16rem] -rotate-1 rounded-sm bg-stone-100 p-2.5 pb-3 shadow-2xl shadow-black/60 sm:max-w-xs lg:w-auto lg:max-w-sm lg:p-3 lg:pb-5" style={{ animationDelay: "0.1s" }}>
@@ -1994,6 +1994,23 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
         >
           <InstagramGlyph className="h-5 w-5" />
           分享到 IG 限時動態
+        </button>
+
+        <NextTabButton label="看看其他租客" onClick={() => switchTab("others")} theme={t} />
+        {utilityButtons}
+      </div>
+      )}
+
+      {/* 「你的房間」裡的下一頁：看看其他租客（分頁列仍停在「你的房間」） */}
+      {tab === "others" && (
+      <div key="others" className="la-fade-in space-y-6 lg:col-span-7">
+        <button
+          type="button"
+          onClick={() => switchTab("room")}
+          className="group -ml-1 flex items-center gap-1 rounded-full px-1 py-1 text-sm text-zinc-400 transition hover:text-zinc-100"
+        >
+          <ChevronLeft className="h-4 w-4 transition group-hover:-translate-x-0.5" />
+          回到你的房間
         </button>
 
         {/* 看看其他租客：左右滑動 */}
@@ -2078,10 +2095,10 @@ function ResultTabs({ tab, onTab, theme }) {
           key={id}
           type="button"
           role="tab"
-          aria-selected={tab === id}
+          aria-selected={(tab === "others" ? "room" : tab) === id}
           onClick={() => onTab(id)}
           className={`whitespace-nowrap rounded-full px-2 py-2 text-sm outline-none transition focus-visible:ring-2 focus-visible:ring-white/60 ${
-            tab === id ? `font-medium ${theme.btn}` : "text-zinc-400 hover:text-zinc-100"
+            (tab === "others" ? "room" : tab) === id ? `font-medium ${theme.btn}` : "text-zinc-400 hover:text-zinc-100"
           }`}
         >
           {label}
