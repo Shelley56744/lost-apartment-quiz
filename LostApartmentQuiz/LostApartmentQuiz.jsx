@@ -1180,9 +1180,6 @@ function Quiz({ name, qIndex, answers, onSelect, onBack, onNext, onSubmit, locke
       <div key={q.id} className="la-fade-up flex flex-1 flex-col lg:flex-none">
         <div className="mb-8 flex items-start gap-3">
           <div className="min-w-0 flex-1">
-            <p className="mb-3 text-xs tracking-[0.3em] text-zinc-500">
-              {q.scene || <span aria-hidden="true">{"\u00A0"}</span>}
-            </p>
             <h2 className="text-2xl font-medium leading-relaxed text-zinc-50 md:text-3xl md:leading-relaxed">{q.text}</h2>
           </div>
           <img
@@ -1269,7 +1266,7 @@ function Opening({ name, theme }) {
             alt={i === 2 ? "若失公寓的門打開了" : ""}
             width="900"
             height="640"
-            className={`absolute inset-0 h-full w-full select-none object-cover object-[52%_30%] transition-opacity duration-300 ${
+            className={`absolute inset-0 h-full w-full select-none object-cover object-[48%_30%] transition-opacity duration-300 ${
               frame === i ? "opacity-100" : "opacity-0"
             }`}
             draggable="false"
@@ -1414,7 +1411,7 @@ function SupportCard({ theme, onTap = () => {} }) {
           aria-label="前往若失公寓 Instagram @lost.apt"
           className="flex w-full items-center justify-center gap-2 rounded-2xl border border-zinc-700 bg-zinc-950/40 px-5 py-3.5 text-zinc-100 transition hover:border-zinc-500"
         >
-          Instagram
+          <span className="whitespace-nowrap">Instagram @lost.apt</span>
         </a>
       </div>
     </article>
@@ -1833,7 +1830,7 @@ function StoryModal({ story, theme, onClose, onTap = () => {} }) {
                   className={`flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3.5 font-medium transition active:scale-[0.99] ${theme.btn}`}
                 >
                   <Share2 className="h-5 w-5" />
-                  分享圖片（選 Instagram）
+                  分享圖片
                 </button>
               ) : (
                 <button
@@ -2095,7 +2092,7 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
 // ---------- 結果頁分頁列 ----------
 const RESULT_TABS = [
   { id: "room", label: "你的房間" },
-  { id: "support", label: "支持" },
+  { id: "support", label: "支持我們" },
 ];
 
 function ResultTabs({ tab, onTab, theme }) {
