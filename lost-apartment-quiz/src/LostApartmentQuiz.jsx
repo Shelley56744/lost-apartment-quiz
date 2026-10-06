@@ -1880,6 +1880,18 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
     });
   };
   const others = ORDER.filter((k) => k !== resultKey);
+  const [tab, setTab] = useState("room"); // room | support
+  const sectionRef = useRef(null);
+  const switchTab = (id) => {
+    if (id === tab) return;
+    onTap();
+    setTab(id);
+    // 已經往下捲時，切換後回到結果頁頂端
+    const el = sectionRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    if (window.scrollY > top) window.scrollTo({ top, behavior: "smooth" });
+  };
 
   // 入住須知／重新測驗
   const utilityButtons = (
@@ -1904,36 +1916,31 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
   );
 
   return (
-    <section className="pb-10 pt-4 lg:grid lg:grid-cols-12 lg:gap-12 lg:pt-8">
-      {/* 手機：揭曉標題 */}
-      <div className="la-fade-up mb-6 flex flex-col items-center gap-2 lg:hidden">
+    <section ref={sectionRef} className="pb-10 pt-4 lg:grid lg:grid-cols-12 lg:gap-x-12 lg:pt-4">
+      {/* 揭曉標題（手機、電腦都置中） */}
+      <div className="la-fade-up flex flex-col items-center gap-1 lg:col-span-12">
         <img
           src={ASSETS.spiderIdea}
           alt=""
           width="320"
           height="238"
-          className="la-bob h-16 w-auto select-none"
+          className="la-bob h-12 w-auto select-none lg:h-16"
           draggable="false"
         />
         <p className="text-center text-sm tracking-[0.2em] text-zinc-400">{name}，你來到若失公寓了</p>
       </div>
 
+      {/* 分頁列：你的房間／支持（置中、捲動時黏在上方） */}
+      <div className="sticky top-0 z-30 mb-4 mt-2 flex justify-center lg:col-span-12 lg:mb-10 lg:mt-4" style={{ paddingTop: "max(0.5rem, env(safe-area-inset-top))" }}>
+        <ResultTabs tab={tab} onTab={switchTab} theme={t} />
+      </div>
+
       {/* 左欄：拍立得、Hashtag（電腦版固定在左邊） */}
-      <div className="space-y-6 lg:sticky lg:top-10 lg:col-span-5 lg:self-start">
-        <div className="la-fade-up hidden flex-col items-center gap-2 lg:flex">
-          <img
-            src={ASSETS.spiderIdea}
-            alt=""
-            width="320"
-            height="238"
-            className="la-bob h-16 w-auto select-none"
-            draggable="false"
-          />
-          <p className="text-center text-sm tracking-[0.2em] text-zinc-400">{name}，你來到若失公寓了</p>
-        </div>
+      {tab === "room" && (
+      <div className="space-y-4 lg:sticky lg:top-24 lg:col-span-5 lg:self-start lg:space-y-6">
 
         {/* 拍立得卡 */}
-        <div className="la-fade-up mx-auto max-w-sm -rotate-1 rounded-sm bg-stone-100 p-3 pb-5 shadow-2xl shadow-black/60" style={{ animationDelay: "0.1s" }}>
+        <div className="la-fade-up mx-auto w-[68%] max-w-[16rem] -rotate-1 rounded-sm bg-stone-100 p-2.5 pb-3 shadow-2xl shadow-black/60 sm:max-w-xs lg:w-auto lg:max-w-sm lg:p-3 lg:pb-5" style={{ animationDelay: "0.1s" }}>
           <div className="relative aspect-[4/3] overflow-hidden rounded-[2px] bg-[#B8B6C2]">
             <div className={`la-ripple absolute left-1/2 top-1/2 -ml-16 -mt-16 h-32 w-32 rounded-full border ${t.border}`} />
             <div className={`la-ripple absolute left-1/2 top-1/2 -ml-16 -mt-16 h-32 w-32 rounded-full border ${t.border}`} style={{ animationDelay: "1.8s" }} />
@@ -1949,9 +1956,9 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
             </div>
             <span className="absolute bottom-2 right-3 text-[10px] tracking-widest text-zinc-500">LOST APARTMENT</span>
           </div>
-          <div className="px-4 pb-1 pt-4 text-zinc-800">
-            <p className="text-xs tracking-wider text-zinc-500">你走進了……</p>
-            <p className="mt-1 text-xl font-semibold">{c.roomName}</p>
+          <div className="px-2 pb-1 pt-3 text-zinc-800 lg:px-4 lg:pt-4">
+            <p className="text-[11px] tracking-wider text-zinc-500 lg:text-xs">你走進了……</p>
+            <p className="mt-0.5 text-base font-semibold lg:mt-1 lg:text-xl">{c.roomName}</p>
           </div>
         </div>
 
@@ -1966,8 +1973,11 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
 
       </div>
 
-      {/* 右欄：全部內容整理在同一頁（不分頁） */}
-      <div className="mt-6 space-y-6 lg:col-span-7 lg:mt-0">
+      )}
+
+      {/* 右欄：「你的房間」內容 */}
+      {tab === "room" && (
+      <div key="room" className="la-fade-in mt-6 space-y-6 lg:col-span-7 lg:mt-0">
         {/* 共鳴獨白 */}
         <article className={`la-fade-up rounded-3xl border ${t.border} bg-zinc-900/60 p-6 backdrop-blur`} style={{ animationDelay: "0.25s" }}>
           {/* 金句放最上面、放大 */}
@@ -1992,9 +2002,6 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
         {/* 展覽資訊 */}
         <ExhibitionCard theme={t} />
 
-        {/* 支持若失公寓：募資平台 + Instagram */}
-        <SupportCard theme={t} onTap={onTap} />
-
         {/* 若失結語 */}
         <div className="px-2 py-4 text-center">
           <div className="mx-auto mb-6 h-px w-12 bg-zinc-700" />
@@ -2013,8 +2020,19 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
           />
         </div>
 
+        <NextTabButton label="支持若失公寓" onClick={() => switchTab("support")} theme={t} />
         {utilityButtons}
       </div>
+      )}
+
+      {/* 「支持」分頁：只放支持內容 */}
+      {tab === "support" && (
+        <div key="support" className="la-fade-in mx-auto w-full max-w-xl space-y-6 lg:col-span-12">
+          {/* 支持若失公寓：募資平台 + Instagram */}
+          <SupportCard theme={t} onTap={onTap} />
+          {utilityButtons}
+        </div>
+      )}
 
       <footer className="flex flex-col items-center gap-3 pt-6 lg:col-span-12 lg:pt-12">
         <div className="flex items-center gap-3">
@@ -2039,6 +2057,51 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
       </footer>
       <StoryModal story={story} theme={t} onClose={closeStory} onTap={onTap} />
     </section>
+  );
+}
+
+// ---------- 結果頁分頁列 ----------
+const RESULT_TABS = [
+  { id: "room", label: "你的房間" },
+  { id: "support", label: "支持" },
+];
+
+function ResultTabs({ tab, onTab, theme }) {
+  return (
+    <nav
+      role="tablist"
+      aria-label="結果頁分頁"
+      className="grid w-[15rem] grid-cols-2 gap-1 rounded-full border border-white/10 bg-zinc-950/95 p-1 shadow-lg shadow-black/40 backdrop-blur-md"
+    >
+      {RESULT_TABS.map(({ id, label }) => (
+        <button
+          key={id}
+          type="button"
+          role="tab"
+          aria-selected={tab === id}
+          onClick={() => onTab(id)}
+          className={`whitespace-nowrap rounded-full px-2 py-2 text-sm outline-none transition focus-visible:ring-2 focus-visible:ring-white/60 ${
+            tab === id ? `font-medium ${theme.btn}` : "text-zinc-400 hover:text-zinc-100"
+          }`}
+        >
+          {label}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+// 「你的房間」最後的下一步，帶使用者到「支持」
+function NextTabButton({ label, onClick, theme }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`group flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-zinc-700 px-6 py-3.5 text-sm text-zinc-300 transition ${theme.hoverBorder}`}
+    >
+      {label}
+      <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+    </button>
   );
 }
 
