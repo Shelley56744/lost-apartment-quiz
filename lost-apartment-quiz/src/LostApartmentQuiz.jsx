@@ -1112,7 +1112,7 @@ function Landing({ nickname, setNickname, onStart }) {
           }`}
         >
           <DoorOpen className="h-5 w-5 transition group-hover:translate-x-0.5" />
-          領取鑰匙，推開房門
+          拉開門簾
         </button>
         </div>
       </div>
@@ -1880,19 +1880,8 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
     });
   };
   const others = ORDER.filter((k) => k !== resultKey);
-  const [tab, setTab] = useState("room");
-  const sectionRef = useRef(null);
-  // 切換分頁時，若已經往下捲，回到結果頁頂端
-  const switchTab = (id) => {
-    onTap();
-    setTab(id);
-    const el = sectionRef.current;
-    if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY;
-    if (window.scrollY > top) window.scrollTo({ top, behavior: "smooth" });
-  };
 
-  // 入住須知／重新測驗：每個分頁最下面都放，不用切到最後一頁才能重玩
+  // 入住須知／重新測驗
   const utilityButtons = (
     <div className="grid grid-cols-2 gap-3">
       <button
@@ -1915,9 +1904,9 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
   );
 
   return (
-    <section ref={sectionRef} className="pb-10 pt-4 lg:grid lg:grid-cols-12 lg:gap-12 lg:pt-8">
-      {/* 手機：揭曉標題，下面接黏在頂端的分頁列 */}
-      <div className="la-fade-up flex flex-col items-center gap-2 lg:hidden">
+    <section className="pb-10 pt-4 lg:grid lg:grid-cols-12 lg:gap-12 lg:pt-8">
+      {/* 手機：揭曉標題 */}
+      <div className="la-fade-up mb-6 flex flex-col items-center gap-2 lg:hidden">
         <img
           src={ASSETS.spiderIdea}
           alt=""
@@ -1929,12 +1918,8 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
         <p className="text-center text-sm tracking-[0.2em] text-zinc-400">{name}，你來到若失公寓了</p>
       </div>
 
-      <div className="sticky top-0 z-30 -mx-5 mb-4 mt-3 px-5 pb-2 pr-14 sm:-mx-8 sm:px-8 sm:pr-16 lg:hidden" style={{ paddingTop: "max(0.5rem, env(safe-area-inset-top))" }}>
-        <ResultTabs tab={tab} onTab={switchTab} theme={t} />
-      </div>
-
-      {/* 左欄：拍立得、Hashtag（手機只在「你的房間」顯示；電腦版一直固定在左邊） */}
-      <div className={`${tab === "room" ? "block" : "hidden"} space-y-6 lg:sticky lg:top-10 lg:col-span-5 lg:block lg:self-start`}>
+      {/* 左欄：拍立得、Hashtag（電腦版固定在左邊） */}
+      <div className="space-y-6 lg:sticky lg:top-10 lg:col-span-5 lg:self-start">
         <div className="la-fade-up hidden flex-col items-center gap-2 lg:flex">
           <img
             src={ASSETS.spiderIdea}
@@ -1981,91 +1966,54 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
 
       </div>
 
-      {/* 右欄：分頁內容 */}
-      <div className="mt-6 lg:col-span-7 lg:mt-0">
-        <div className="sticky top-0 z-30 mb-6 hidden py-3 lg:block">
-          <ResultTabs tab={tab} onTab={switchTab} theme={t} />
+      {/* 右欄：全部內容整理在同一頁（不分頁） */}
+      <div className="mt-6 space-y-6 lg:col-span-7 lg:mt-0">
+        {/* 共鳴獨白 */}
+        <article className={`la-fade-up rounded-3xl border ${t.border} bg-zinc-900/60 p-6 backdrop-blur`} style={{ animationDelay: "0.25s" }}>
+          {/* 金句放最上面、放大 */}
+          <p className={`text-xl font-semibold leading-relaxed ${t.text}`}>「{c.quote}」</p>
+          <p className="mt-2 text-right text-xs text-zinc-500">— {c.name}</p>
+          <div className={`my-5 border-t ${t.border}`} />
+          <p className="leading-loose text-zinc-200">{c.monologue}</p>
+        </article>
+
+        <button
+          type="button"
+          onClick={openStory}
+          className={`flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-4 font-medium transition active:scale-[0.99] ${t.btn}`}
+        >
+          <InstagramGlyph className="h-5 w-5" />
+          分享到 IG 限時動態
+        </button>
+
+        {/* 看看其他租客：左右滑動 */}
+        <OtherTenants others={others} onTap={onTap} />
+
+        {/* 展覽資訊 */}
+        <ExhibitionCard theme={t} />
+
+        {/* 支持若失公寓：募資平台 + Instagram */}
+        <SupportCard theme={t} onTap={onTap} />
+
+        {/* 若失結語 */}
+        <div className="px-2 py-4 text-center">
+          <div className="mx-auto mb-6 h-px w-12 bg-zinc-700" />
+          {CLOSING_LINES.map((line, i) => (
+            <p key={i} className="leading-[2.2] text-zinc-400">
+              {line}
+            </p>
+          ))}
+          <img
+            src={ASSETS.spiderYarn}
+            alt="抱著毛線球的織蛛"
+            width="360"
+            height="356"
+            className="la-dangle mx-auto mt-6 h-20 w-20 select-none object-contain"
+            draggable="false"
+          />
         </div>
 
-        {tab === "room" && (
-          <div key="room" className="la-fade-in space-y-6">
-          {/* 共鳴獨白 */}
-          <article className={`la-fade-up rounded-3xl border ${t.border} bg-zinc-900/60 p-6 backdrop-blur`} style={{ animationDelay: "0.25s" }}>
-            {/* 金句放最上面、放大 */}
-            <p className={`text-xl font-semibold leading-relaxed ${t.text}`}>「{c.quote}」</p>
-            <p className="mt-2 text-right text-xs text-zinc-500">— {c.name}</p>
-            <div className={`my-5 border-t ${t.border}`} />
-            <p className="leading-loose text-zinc-200">{c.monologue}</p>
-          </article>
-
-            <button
-              type="button"
-              onClick={openStory}
-              className={`flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-4 font-medium transition active:scale-[0.99] ${t.btn}`}
-            >
-              <InstagramGlyph className="h-5 w-5" />
-              分享到 IG 限時動態
-            </button>
-            <NextTabButton label="看看其他租客" onClick={() => switchTab("others")} theme={t} />
-            {utilityButtons}
-          </div>
-        )}
-
-        {tab === "others" && (
-          <div key="others" className="la-fade-in space-y-6">
-            <OtherTenants others={others} onTap={onTap} />
-          {/* 若失結語 */}
-          <div className="la-fade-up px-2 py-6 text-center" style={{ animationDelay: "0.15s" }}>
-            <div className="mx-auto mb-6 h-px w-12 bg-zinc-700" />
-            {CLOSING_LINES.map((line, i) => (
-              <p key={i} className="leading-[2.2] text-zinc-400">
-                {line}
-              </p>
-            ))}
-            <img
-              src={ASSETS.spiderYarn}
-              alt="抱著毛線球的織蛛"
-              width="360"
-              height="356"
-              className="la-dangle mx-auto mt-6 h-20 w-20 select-none object-contain"
-              draggable="false"
-            />
-          </div>
-
-            {/* 展覽資訊：只出現在「其他租客」最下面 */}
-            <ExhibitionCard theme={t} />
-            <NextTabButton label="分享你的房間、支持我們" onClick={() => switchTab("share")} theme={t} />
-            {utilityButtons}
-          </div>
-        )}
-
-        {tab === "share" && (
-          <div key="share" className="la-fade-in space-y-6">
-            <div className="space-y-3">
-              <button
-                type="button"
-                onClick={openStory}
-                className={`flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-4 font-medium transition active:scale-[0.99] ${t.btn}`}
-              >
-                <InstagramGlyph className="h-5 w-5" />
-                分享到 IG 限時動態
-              </button>
-              <button
-                type="button"
-                onClick={onShare}
-                className={`flex w-full items-center justify-center gap-2 rounded-2xl border border-zinc-700 bg-zinc-900/60 px-6 py-3.5 text-zinc-200 transition ${t.hoverBorder}`}
-              >
-                {shareState === "done" ? <CheckCircle2 className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
-                {shareState === "done" ? "已複製，傳給室友吧" : shareState === "fail" ? "複製失敗，請長按截圖分享" : "複製文字結果，分享給室友"}
-              </button>
-            </div>
-
-            {/* 支持若失公寓：募資平台 + Instagram */}
-            <SupportCard theme={t} onTap={onTap} />
-
-            {utilityButtons}
-          </div>
-        )}
+        {utilityButtons}
       </div>
 
       <footer className="flex flex-col items-center gap-3 pt-6 lg:col-span-12 lg:pt-12">
@@ -2091,52 +2039,6 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
       </footer>
       <StoryModal story={story} theme={t} onClose={closeStory} onTap={onTap} />
     </section>
-  );
-}
-
-// ---------- 結果頁分頁列 ----------
-const RESULT_TABS = [
-  { id: "room", label: "你的房間" },
-  { id: "others", label: "其他租客" },
-  { id: "share", label: "分享・支持" },
-];
-
-function ResultTabs({ tab, onTab, theme }) {
-  return (
-    <nav
-      role="tablist"
-      aria-label="結果頁分頁"
-      className="grid grid-cols-3 gap-1 rounded-full border border-white/10 bg-zinc-950/95 p-1 shadow-lg shadow-black/40 backdrop-blur-md"
-    >
-      {RESULT_TABS.map(({ id, label }) => (
-        <button
-          key={id}
-          type="button"
-          role="tab"
-          aria-selected={tab === id}
-          onClick={() => onTab(id)}
-          className={`whitespace-nowrap rounded-full px-1 py-2 text-[13px] outline-none transition focus-visible:ring-2 focus-visible:ring-white/60 sm:px-2 sm:text-sm ${
-            tab === id ? `font-medium ${theme.btn}` : "text-zinc-400 hover:text-zinc-100"
-          }`}
-        >
-          {label}
-        </button>
-      ))}
-    </nav>
-  );
-}
-
-// 每個分頁最後的「下一步」，帶使用者往下一個分頁
-function NextTabButton({ label, onClick, theme }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`group flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-zinc-700 px-6 py-3.5 text-sm text-zinc-300 transition ${theme.hoverBorder}`}
-    >
-      {label}
-      <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-    </button>
   );
 }
 
