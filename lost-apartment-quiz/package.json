@@ -1,0 +1,24 @@
+{
+  "name": "lost-apartment-quiz",
+  "private": true,
+  "version": "1.0.0",
+  "description": "若失公寓 LOST Apartment｜你正經歷哪種「不知道」？迷惘共振測驗",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lucide-react": "^1.52.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.2",
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.5.29",
+    "tailwindcss": "^3.4.19",
+    "vite": "^8.3.3"
+  }
+}
