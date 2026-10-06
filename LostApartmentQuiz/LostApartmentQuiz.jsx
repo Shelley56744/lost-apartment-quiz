@@ -199,7 +199,7 @@ const CHARACTERS = {
       "拿起吉他 Pick，刮開卡片上銀灰色的「科技外衣」。",
       "戴上床上的耳機聽他的深夜獨白，再幫他把 offer 投進門口的小信箱。",
     ],
-    hashtags: ["#家人的期待不是自己想做的", "#做遊戲", "#陽光外向好相處", "#很多朋友"], // 依《角色介紹》：迷惘的點、興趣、個性
+    hashtags: ["#做遊戲", "#很多朋友", "#陽光外向好相處", "#家人的期待不是自己想做的"], // 依《角色介紹》：迷惘的點、興趣、個性
     theme: {
       text: "text-blue-400",
       hex: "#60a5fa", // 限動圖片用的角色色
@@ -303,6 +303,9 @@ const CHARACTERS = {
 };
 
 const ORDER = ["ian", "yuting", "siyu", "muwei"];
+
+// Hashtag 依字數由短到長排列，最長的放最後，換行時比較平衡
+const sortedTags = (tags) => [...tags].sort((a, b) => Array.from(a).length - Array.from(b).length);
 
 // ---------- 題庫（嚴格依照企劃） ----------
 const QUESTIONS = [
@@ -467,7 +470,7 @@ const GlobalStyles = () => (
 const EVENT = {
   name: "若失公寓",
   dates: "11/14（六）、11/15（日）",
-  place: "陽明交大人社三館 201 室",
+  place: "陽明交大光復校區 人社三館 201 室",
 };
 
 const LINKS = {
@@ -983,16 +986,11 @@ function SoundToggle({ on, unlocked, onToggle }) {
 
 // ---------- 背景：社群背景圖（深夜格線與星點） ----------
 
-function Backdrop({ theme }) {
-  const glow = theme ? theme.glow : "bg-blue-500/15";
-  const glow2 = theme ? theme.glow2 : "bg-red-500/10";
+function Backdrop() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
-      {/* 主視覺「社群背景圖」：格線、手繪星號與彩色微光點 */}
+      {/* 主視覺「社群背景圖」：格線、手繪星號與彩色微光點（不加任何漸層） */}
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${ASSETS.bgChalk})` }} />
-      <div className={`la-float absolute -left-24 top-[-6rem] h-80 w-80 rounded-full opacity-70 blur-3xl transition-colors duration-1000 ${glow}`} />
-      <div className={`la-float2 absolute -right-20 bottom-[-4rem] h-96 w-96 rounded-full opacity-70 blur-3xl transition-colors duration-1000 ${glow2}`} />
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_60%,rgba(9,9,11,0.45))]" />
     </div>
   );
 }
@@ -1011,10 +1009,9 @@ function Landing({ nickname, setNickname, onStart }) {
     onStart();
   };
   return (
-    <section className="la-fade-up flex min-h-[85vh] flex-col justify-center pt-12 sm:pt-0 lg:grid lg:min-h-[88vh] lg:grid-cols-2 lg:items-center lg:gap-16">
-      {/* 左欄（手機上在上方）：標題與引言 */}
-      <div>
-      <h1 className="-mx-5 sm:-mx-8 lg:mx-0">
+    <section className="la-fade-up flex min-h-[85vh] flex-col justify-center pt-12 sm:pt-0 lg:grid lg:min-h-[88vh] lg:grid-cols-2 lg:content-center lg:items-center lg:gap-x-16 lg:gap-y-4">
+      {/* 主視覺：電腦版橫跨兩欄、放大置中 */}
+      <h1 className="-mx-5 sm:-mx-8 lg:col-span-2 lg:mx-auto lg:w-full lg:-mt-6 lg:max-w-[min(60rem,105vh)]">
         <img
           src={ASSETS.wordmarkWeb}
           alt="若失公寓"
@@ -1023,16 +1020,19 @@ function Landing({ nickname, setNickname, onStart }) {
           className="la-flicker block h-auto w-full select-none"
           draggable="false"
         />
-        <span className="mt-1 block text-center text-sm font-normal tracking-[0.45em] text-zinc-400">LOST Apartment</span>
+        <span className="mt-1 block text-center text-sm font-normal tracking-[0.45em] text-zinc-400 lg:text-base">LOST Apartment</span>
       </h1>
 
-      <p className="mt-8 flex justify-center lg:justify-start">
+      {/* 左欄（手機上在上方）：標題與引言 */}
+      <div>
+
+      <p className="mt-8 flex justify-center lg:mt-0 lg:justify-start">
         <span className="rounded-full border border-[#EDF1EC]/25 bg-zinc-900/50 px-4 py-1.5 text-xs tracking-widest text-zinc-300 backdrop-blur lg:text-sm">
           {EVENT.name}前導小遊戲
         </span>
       </p>
 
-      <h2 className="mt-5 text-center text-[1.75rem] font-bold leading-snug tracking-wide text-[#EDF1EC] sm:text-4xl lg:mt-12 lg:text-left lg:text-5xl lg:leading-tight xl:text-6xl xl:leading-tight">
+      <h2 className="mt-5 text-center text-[1.75rem] font-bold leading-snug tracking-wide text-[#EDF1EC] sm:text-4xl lg:mt-6 lg:text-left lg:text-5xl lg:leading-tight xl:text-6xl xl:leading-tight">
         你正經歷哪種<br className="hidden lg:inline" />「不知道」？
       </h2>
 
@@ -1101,11 +1101,6 @@ function Landing({ nickname, setNickname, onStart }) {
           )}
         </p>
         <div className="relative">
-        {/* 四位室友的四種顏色，在按鈕後面微微發光 */}
-        <div
-          aria-hidden="true"
-          className={`pointer-events-none absolute -inset-1 rounded-3xl bg-[linear-gradient(90deg,#5FAE85,#60a5fa,#facc15,#f87171)] blur-lg transition-opacity duration-500 ${ready ? "opacity-60" : "opacity-20"}`}
-        />
         <button
           type="button"
           onClick={submit}
@@ -1239,9 +1234,8 @@ function Quiz({ name, qIndex, answers, onSelect, onBack, onNext, onSubmit, locke
               className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#EDF1EC] px-6 py-4 text-lg font-medium text-[#3A4358] transition hover:bg-white active:scale-[0.99] disabled:bg-zinc-800/90 disabled:text-[#EDF1EC]/50"
             >
               <DoorOpen className="h-5 w-5" />
-              確認送出，推開房門
+              確認送出
             </button>
-            <p className="text-center text-xs text-zinc-500">送出後就不能再修改答案囉</p>
           </div>
         )}
       </div>
@@ -1280,7 +1274,7 @@ function Opening({ name, theme }) {
         ))}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(9,9,11,0.55))]" />
       </div>
-      <p className="text-lg text-zinc-200">鑰匙轉動了⋯⋯</p>
+      <p className="text-lg text-zinc-200">進入若失公寓⋯⋯</p>
       <p className="mt-2 text-sm text-zinc-500">正在為 {name} 尋找共鳴的房間</p>
     </section>
   );
@@ -1299,11 +1293,11 @@ function GuideModal({ open, onClose }) {
   const tips = [
     { Icon: Footprints, title: "進房前請脫鞋", body: "若失公寓是大家暫住的家，請在玄關脫鞋，輕輕走進來。" },
     { Icon: DoorOpen, title: "由管理員帶你入住若失公寓", body: "到了展場，公寓管理員會帶你推開大門，陪你走向第一個房間。" },
-    { Icon: Compass, title: "只有迷惘中的人，才進得了別人的房間", body: "室友們暫時不在。房裡的物件都可以拿起來看、翻一翻、動手試試看，離開前請放回原位。" },
+    { Icon: Compass, title: "只有迷惘中的人，才進得了別人的房間", body: "室友們暫時不在，而房裡的物件都可以探索，拿起來看一看、看到他們的迷惘點。" },
     {
       Icon: Leaf,
       title: "最後，入住你的新房間",
-      body: "看完室友們的房間，還有一間空著的房間在等你。它會變成什麼樣子，留給你親手決定。",
+      body: "還有一間空房，而它會變成什麼樣子，交給你親手決定。",
     },
   ];
   return (
@@ -1366,7 +1360,7 @@ const InstagramGlyph = ({ className }) => (
 );
 
 // ---------- 支持我們：募資平台與 IG ----------
-function SupportCard({ theme }) {
+function SupportCard({ theme, onTap = () => {} }) {
   const live = Boolean(LINKS.crowdfunding);
   return (
     <article className="la-fade-up rounded-3xl border border-[#EDF1EC]/15 bg-zinc-900/60 p-6 backdrop-blur">
@@ -1381,6 +1375,7 @@ function SupportCard({ theme }) {
         {live ? (
           <a
             href={LINKS.crowdfunding}
+            onClick={onTap}
             target="_blank"
             rel="noopener noreferrer"
             className={`flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3.5 font-medium transition active:scale-[0.99] ${theme.btn}`}
@@ -1400,6 +1395,7 @@ function SupportCard({ theme }) {
         )}
         <a
           href={LINKS.instagram}
+          onClick={onTap}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="前往若失公寓 Instagram @lost.apt"
@@ -1413,27 +1409,23 @@ function SupportCard({ theme }) {
   );
 }
 
-// ---------- 結果頁：實體展覽邀請 ----------
+// ---------- 結果頁：展覽資訊（放在「你來到若失公寓了」下面） ----------
 function ExhibitionCard({ theme, className = "" }) {
   return (
-    <article className={`rounded-3xl border ${theme.border} ${theme.bgSoft} p-6 ${className}`}>
-      <p className="flex items-center gap-2 text-xs tracking-widest text-zinc-400">
-        <CalendarDays className="h-4 w-4" />
-        實體展覽
-      </p>
+    <div className={`w-full rounded-2xl border border-white/70 px-4 py-4 text-center ${className}`}>
       {/* 一行顯示：字級隨螢幕寬度縮放，最小的手機也不換行 */}
-      <p className="mt-3 whitespace-nowrap text-[min(1rem,3.75vw)] leading-relaxed text-zinc-100 lg:text-base">這些都是若失公寓的租客們，歡迎來體驗。</p>
-      <p className={`mt-2 text-lg font-semibold ${theme.text}`}>{EVENT.dates}</p>
-      <p className="mt-2 flex items-center gap-1.5 text-sm text-zinc-400">
-        <MapPin className="h-4 w-4 shrink-0" />
-        {EVENT.place}
+      <p className="whitespace-nowrap text-[min(0.95rem,3.6vw)] leading-relaxed text-zinc-100 lg:text-[0.95rem]">這些都是若失公寓的租客們，歡迎來體驗。</p>
+      <p className={`mt-1 text-base font-semibold ${theme.text}`}>{EVENT.dates}</p>
+      <p className="mt-1 flex items-center justify-center gap-1.5 text-[min(0.85rem,3.4vw)] text-zinc-400 lg:text-sm">
+        <MapPin className="h-3.5 w-3.5 shrink-0" />
+        <span className="whitespace-nowrap">{EVENT.place}</span>
       </p>
-    </article>
+    </div>
   );
 }
 
 // ---------- 結果頁：看看其他租客（左右滑動） ----------
-function OtherTenants({ others }) {
+function OtherTenants({ others, onTap = () => {} }) {
   const trackRef = useRef(null);
   const [active, setActive] = useState(0);
   const onScroll = () => {
@@ -1474,7 +1466,10 @@ function OtherTenants({ others }) {
         <div className="hidden shrink-0 gap-2 md:flex">
           <button
             type="button"
-            onClick={() => goTo(active - 1)}
+            onClick={() => {
+              onTap();
+              goTo(active - 1);
+            }}
             disabled={active === 0}
             aria-label="上一位租客"
             className="rounded-full border border-zinc-700 p-2 text-zinc-300 transition hover:border-zinc-500 disabled:opacity-30"
@@ -1483,7 +1478,10 @@ function OtherTenants({ others }) {
           </button>
           <button
             type="button"
-            onClick={() => goTo(active + 1)}
+            onClick={() => {
+              onTap();
+              goTo(active + 1);
+            }}
             disabled={active === others.length - 1}
             aria-label="下一位租客"
             className="rounded-full border border-zinc-700 p-2 text-zinc-300 transition hover:border-zinc-500 disabled:opacity-30"
@@ -1506,21 +1504,18 @@ function OtherTenants({ others }) {
               key={k}
               className={`w-[78%] shrink-0 snap-start overflow-hidden rounded-2xl border ${o.theme.border} bg-zinc-950/50 sm:w-[60%] lg:w-[64%]`}
             >
-              <div className={`relative flex h-36 items-center justify-center bg-gradient-to-br ${o.theme.photo}`}>
+              <div className="relative flex h-36 items-center justify-center bg-[#B8B6C2]">
                 <img
                   src={ASSETS.objects[k]}
                   alt={o.objectAlt}
                   width="480"
                   height="480"
-                  className="h-28 w-28 select-none object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.5)]"
+                  className="h-28 w-28 select-none object-contain [filter:drop-shadow(0_0_24px_rgba(255,255,255,0.75))_drop-shadow(0_0_56px_rgba(255,255,255,0.7))]"
                   draggable="false"
                 />
               </div>
               <div className="p-4">
                 <p className={`font-medium ${o.theme.text}`}>{o.roomName}</p>
-                <p className="mt-0.5 text-xs text-zinc-500">
-                  {o.name}・{o.dept}
-                </p>
                 <p className="mt-3 text-sm leading-relaxed text-zinc-300">{o.lostLine}</p>
               </div>
             </li>
@@ -1538,12 +1533,6 @@ function OtherTenants({ others }) {
           />
         ))}
       </div>
-      <p className="mt-3 px-3 text-center text-xs leading-relaxed text-zinc-500">
-        他們的房間裡還藏著什麼？
-        <br />
-        {/* 第二行不換行：字級隨螢幕寬度微調 */}
-        <span className="whitespace-nowrap text-[min(0.75rem,3.2vw)] lg:text-xs">{EVENT.dates}，到展場親自推開門看看吧。</span>
-      </p>
     </article>
   );
 }
@@ -1602,7 +1591,7 @@ const wrapText = (g, text, maxW) => {
 async function renderStoryImage({ name, c }) {
   const hex = c.theme.hex;
   const tagline = `「${EVENT.name}」${EVENT.dates}${EVENT.place}`; // 只用來預先載入字型
-  const allText = `${name}，你走進了${c.roomName}${c.name}・${c.dept}「${c.quote}」${c.hashtags.join("")}${IG_HANDLE}${tagline}LOST APARTMENT`;
+  const allText = `${name}，你走進了${c.roomName}「${c.quote}」${c.hashtags.join("")}${IG_HANDLE}${tagline}LOST APARTMENT`;
   try {
     await Promise.all([26, 40, 72].map((size) => document.fonts.load(`${size}px "LA Huninn"`, allText)));
   } catch (_) {
@@ -1625,11 +1614,6 @@ async function renderStoryImage({ name, c }) {
   g.fillRect(0, 0, STORY_W, STORY_H);
   const s = Math.max(STORY_W / bg.width, STORY_H / bg.height);
   g.drawImage(bg, (STORY_W - bg.width * s) / 2, (STORY_H - bg.height * s) / 2, bg.width * s, bg.height * s);
-  const glow = g.createRadialGradient(cx, 960, 80, cx, 960, 860);
-  glow.addColorStop(0, hexA(hex, 0.3));
-  glow.addColorStop(1, hexA(hex, 0));
-  g.fillStyle = glow;
-  g.fillRect(0, 0, STORY_W, STORY_H);
 
   // 標準字
   const wmW = 600;
@@ -1651,7 +1635,7 @@ async function renderStoryImage({ name, c }) {
   g.translate(cx, 960);
   g.rotate(-0.025);
   const PW = 600;
-  const PH = 540;
+  const PH = 505;
   g.shadowColor = "rgba(0,0,0,0.55)";
   g.shadowBlur = 50;
   g.shadowOffsetY = 20;
@@ -1663,26 +1647,28 @@ async function renderStoryImage({ name, c }) {
   const ph = 400;
   const px = -pw / 2;
   const py = -PH / 2 + 20;
-  const photo = g.createLinearGradient(px, py, px + pw, py + ph);
-  photo.addColorStop(0, hexA(hex, 0.5));
-  photo.addColorStop(0.55, "#0b0b10");
-  photo.addColorStop(1, "#09090b");
-  g.fillStyle = photo;
+  g.fillStyle = "#B8B6C2"; // 拍立得照片底色（單色）
   roundRectPath(g, px, py, pw, ph, 4);
   g.fill();
   const os = 330;
+  // 物件周圍的白色光暈（不是黑色陰影）
+  g.save();
+  g.shadowColor = "rgba(255,255,255,0.85)";
+  g.shadowBlur = 140;
   g.drawImage(obj, -os / 2, py + (ph - os) / 2, os, os);
+  g.drawImage(obj, -os / 2, py + (ph - os) / 2, os, os);
+  g.shadowColor = "rgba(255,255,255,0.7)";
+  g.shadowBlur = 60;
+  g.drawImage(obj, -os / 2, py + (ph - os) / 2, os, os);
+  g.restore();
   g.textAlign = "right";
-  g.fillStyle = "rgba(161,161,170,0.9)";
+  g.fillStyle = "rgba(82,82,91,0.75)";
   g.font = `400 17px ${STORY_FONT}`;
   g.fillText("LOST APARTMENT", px + pw - 18, py + ph - 16);
   g.textAlign = "left";
   g.fillStyle = "#27272a";
-  g.font = `700 34px ${STORY_FONT}`;
-  g.fillText(c.roomName, px + 4, py + ph + 56, pw - 8);
-  g.fillStyle = "#52525b";
-  g.font = `400 25px ${STORY_FONT}`;
-  g.fillText(`${c.name}・${c.dept}`, px + 4, py + ph + 96);
+  g.font = `700 36px ${STORY_FONT}`;
+  g.fillText(c.roomName, px + 20, py + ph + 60, pw - 40);
   g.restore();
 
   // 金句
@@ -1704,9 +1690,10 @@ async function renderStoryImage({ name, c }) {
   const pad = 24;
   const gap = 16;
   // 3–4 個 hashtag，一行放不下就換行，每行置中
+  // 依字數由短到長排，一行放不下就換行（最長的會落在最後）
   const rows = [[]];
   let rowW = 0;
-  c.hashtags.forEach((tag) => {
+  sortedTags(c.hashtags).forEach((tag) => {
     const w = g.measureText(tag).width + pad * 2;
     if (rows.at(-1).length && rowW + gap + w > 900) {
       rows.push([]);
@@ -1720,12 +1707,10 @@ async function renderStoryImage({ name, c }) {
     let x = cx - (row.reduce((a, b) => a + b.w, 0) + gap * (row.length - 1)) / 2;
     row.forEach(({ tag, w }) => {
       roundRectPath(g, x, ry - 40, w, 58, 29);
-      g.fillStyle = hexA(hex, 0.14);
-      g.fill();
-      g.strokeStyle = hexA(hex, 0.5);
+      g.strokeStyle = "rgba(255,255,255,0.7)";
       g.lineWidth = 2;
       g.stroke();
-      g.fillStyle = hex;
+      g.fillStyle = "#FFFFFF";
       g.fillText(tag, x + w / 2, ry);
       x += w + gap;
     });
@@ -1759,7 +1744,7 @@ async function renderStoryImage({ name, c }) {
 }
 
 // ---------- 限動分享視窗 ----------
-function StoryModal({ story, theme, onClose }) {
+function StoryModal({ story, theme, onClose, onTap = () => {} }) {
   const [copied, setCopied] = useState(false);
   useEffect(() => {
     if (!story.open) return;
@@ -1829,7 +1814,10 @@ function StoryModal({ story, theme, onClose }) {
               {canShareFile ? (
                 <button
                   type="button"
-                  onClick={share}
+                  onClick={() => {
+                    onTap();
+                    share();
+                  }}
                   className={`flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3.5 font-medium transition active:scale-[0.99] ${theme.btn}`}
                 >
                   <Share2 className="h-5 w-5" />
@@ -1838,7 +1826,10 @@ function StoryModal({ story, theme, onClose }) {
               ) : (
                 <button
                   type="button"
-                  onClick={download}
+                  onClick={() => {
+                    onTap();
+                    download();
+                  }}
                   className={`flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3.5 font-medium transition active:scale-[0.99] ${theme.btn}`}
                 >
                   <ExternalLink className="h-5 w-5" />
@@ -1847,7 +1838,10 @@ function StoryModal({ story, theme, onClose }) {
               )}
               <button
                 type="button"
-                onClick={copyHandle}
+                onClick={() => {
+                  onTap();
+                  copyHandle();
+                }}
                 className="flex w-full items-center justify-center gap-2 rounded-2xl border border-zinc-700 bg-zinc-900/60 px-5 py-3 text-zinc-200 transition hover:border-zinc-500"
               >
                 {copied ? <CheckCircle2 className="h-4 w-4" /> : <InstagramGlyph className="h-4 w-4" />}
@@ -1863,11 +1857,12 @@ function StoryModal({ story, theme, onClose }) {
 }
 
 // ---------- 階段三：結算推薦卡片 ----------
-function Result({ name, resultKey, scores, answers, onRestart, onShare, shareState, onOpenGuide }) {
+function Result({ name, resultKey, scores, answers, onRestart, onShare, shareState, onOpenGuide, onTap = () => {} }) {
   const [story, setStory] = useState({ open: false, busy: false, url: null, file: null, error: false });
   const c = CHARACTERS[resultKey];
   const t = c.theme;
   const openStory = async () => {
+    onTap();
     setStory({ open: true, busy: true, url: null, file: null, error: false });
     try {
       const blob = await renderStoryImage({ name, c });
@@ -1877,16 +1872,19 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
       setStory((st) => ({ ...st, busy: false, error: true }));
     }
   };
-  const closeStory = () =>
+  const closeStory = () => {
+    onTap();
     setStory((st) => {
       if (st.url) URL.revokeObjectURL(st.url);
       return { open: false, busy: false, url: null, file: null, error: false };
     });
+  };
   const others = ORDER.filter((k) => k !== resultKey);
   const [tab, setTab] = useState("room");
   const sectionRef = useRef(null);
   // 切換分頁時，若已經往下捲，回到結果頁頂端
   const switchTab = (id) => {
+    onTap();
     setTab(id);
     const el = sectionRef.current;
     if (!el) return;
@@ -1937,8 +1935,6 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
 
       {/* 左欄：拍立得、Hashtag（手機只在「你的房間」顯示；電腦版一直固定在左邊） */}
       <div className={`${tab === "room" ? "block" : "hidden"} space-y-6 lg:sticky lg:top-10 lg:col-span-5 lg:block lg:self-start`}>
-        {/* 手機：展覽資訊放在分頁列下面、拍立得上面 */}
-        <ExhibitionCard theme={t} className="lg:hidden" />
         <div className="la-fade-up hidden flex-col items-center gap-2 lg:flex">
           <img
             src={ASSETS.spiderIdea}
@@ -1953,7 +1949,7 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
 
         {/* 拍立得卡 */}
         <div className="la-fade-up mx-auto max-w-sm -rotate-1 rounded-sm bg-stone-100 p-3 pb-5 shadow-2xl shadow-black/60" style={{ animationDelay: "0.1s" }}>
-          <div className={`relative aspect-[4/3] overflow-hidden rounded-[2px] bg-gradient-to-br ${t.photo}`}>
+          <div className="relative aspect-[4/3] overflow-hidden rounded-[2px] bg-[#B8B6C2]">
             <div className={`la-ripple absolute left-1/2 top-1/2 -ml-16 -mt-16 h-32 w-32 rounded-full border ${t.border}`} />
             <div className={`la-ripple absolute left-1/2 top-1/2 -ml-16 -mt-16 h-32 w-32 rounded-full border ${t.border}`} style={{ animationDelay: "1.8s" }} />
             <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -1962,25 +1958,22 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
                 alt={c.objectAlt}
                 width="480"
                 height="480"
-                className="la-bob h-[78%] w-auto select-none object-contain drop-shadow-[0_10px_24px_rgba(0,0,0,0.5)]"
+                className="la-bob h-[78%] w-auto select-none object-contain [filter:drop-shadow(0_0_24px_rgba(255,255,255,0.75))_drop-shadow(0_0_56px_rgba(255,255,255,0.7))]"
                 draggable="false"
               />
             </div>
             <span className="absolute bottom-2 right-3 text-[10px] tracking-widest text-zinc-500">LOST APARTMENT</span>
           </div>
-          <div className="px-1 pt-4 text-zinc-800">
-            <p className="text-xs tracking-widest text-zinc-500">你走進了……</p>
+          <div className="px-4 pb-1 pt-4 text-zinc-800">
+            <p className="text-xs tracking-wider text-zinc-500">你走進了……</p>
             <p className="mt-1 text-xl font-semibold">{c.roomName}</p>
-            <p className="mt-1 text-sm text-zinc-600">
-              {c.name}・{c.dept}
-            </p>
           </div>
         </div>
 
         {/* Hashtags */}
         <div className="la-fade-up flex flex-wrap justify-center gap-2" style={{ animationDelay: "0.2s" }}>
-          {c.hashtags.map((tag) => (
-            <span key={tag} className={`rounded-full border px-3 py-1.5 text-sm ${t.chip}`}>
+          {sortedTags(c.hashtags).map((tag) => (
+            <span key={tag} className="rounded-full border border-white/70 px-3 py-1.5 text-sm text-white">
               {tag}
             </span>
           ))}
@@ -1996,8 +1989,6 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
 
         {tab === "room" && (
           <div key="room" className="la-fade-in space-y-6">
-            {/* 電腦版：展覽資訊放在右欄最上面 */}
-            <ExhibitionCard theme={t} className="hidden lg:block" />
           {/* 共鳴獨白 */}
           <article className={`la-fade-up rounded-3xl border ${t.border} bg-zinc-900/60 p-6 backdrop-blur`} style={{ animationDelay: "0.25s" }}>
             {/* 金句放最上面、放大 */}
@@ -2013,7 +2004,7 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
               className={`flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-4 font-medium transition active:scale-[0.99] ${t.btn}`}
             >
               <InstagramGlyph className="h-5 w-5" />
-              製作 IG 限動圖片
+              分享到 IG 限時動態
             </button>
             <NextTabButton label="看看其他租客" onClick={() => switchTab("others")} theme={t} />
             {utilityButtons}
@@ -2022,7 +2013,7 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
 
         {tab === "others" && (
           <div key="others" className="la-fade-in space-y-6">
-            <OtherTenants others={others} />
+            <OtherTenants others={others} onTap={onTap} />
           {/* 若失結語 */}
           <div className="la-fade-up px-2 py-6 text-center" style={{ animationDelay: "0.15s" }}>
             <div className="mx-auto mb-6 h-px w-12 bg-zinc-700" />
@@ -2041,6 +2032,8 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
             />
           </div>
 
+            {/* 展覽資訊：只出現在「其他租客」最下面 */}
+            <ExhibitionCard theme={t} />
             <NextTabButton label="分享你的房間、支持我們" onClick={() => switchTab("share")} theme={t} />
             {utilityButtons}
           </div>
@@ -2055,7 +2048,7 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
                 className={`flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-4 font-medium transition active:scale-[0.99] ${t.btn}`}
               >
                 <InstagramGlyph className="h-5 w-5" />
-                製作 IG 限動圖片
+                分享到 IG 限時動態
               </button>
               <button
                 type="button"
@@ -2067,10 +2060,8 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
               </button>
             </div>
 
-            <ExhibitionCard theme={t} />
-
             {/* 支持若失公寓：募資平台 + Instagram */}
-            <SupportCard theme={t} />
+            <SupportCard theme={t} onTap={onTap} />
 
             {utilityButtons}
           </div>
@@ -2098,7 +2089,7 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
         </div>
         <p className="text-xs tracking-[0.3em] text-zinc-600">LOST Apartment · 謝謝你來過</p>
       </footer>
-      <StoryModal story={story} theme={t} onClose={closeStory} />
+      <StoryModal story={story} theme={t} onClose={closeStory} onTap={onTap} />
     </section>
   );
 }
@@ -2361,7 +2352,7 @@ export default function LostApartmentQuiz() {
   return (
     <div className="la-root relative min-h-screen bg-[#1E1E24] text-zinc-100 antialiased">
       <GlobalStyles />
-      <Backdrop theme={theme} />
+      <Backdrop />
       <SoundToggle on={soundOn} unlocked={audioUnlocked} onToggle={toggleSound} />
       <SpiderCursor />
 
@@ -2387,11 +2378,18 @@ export default function LostApartmentQuiz() {
               play("tap");
               setGuideOpen(true);
             }}
+            onTap={() => play("tap")}
           />
         )}
       </main>
 
-      <GuideModal open={guideOpen} onClose={() => setGuideOpen(false)} />
+      <GuideModal
+        open={guideOpen}
+        onClose={() => {
+          play("tap");
+          setGuideOpen(false);
+        }}
+      />
     </div>
   );
 }
