@@ -1257,8 +1257,9 @@ function Opening({ name, theme }) {
   }, []);
 
   return (
-    <section className="la-fade-in flex min-h-[85vh] flex-col items-center justify-center text-center">
-      <div className={`relative mb-8 aspect-[45/32] w-full max-w-sm overflow-hidden md:max-w-xl rounded-2xl border border-white/10 shadow-2xl shadow-black/60 ring-2 ${theme ? theme.ring : "ring-transparent"}`}>
+    // 開門畫面盡量填滿整個螢幕：手機上圖佔上方約八成（保留招牌與門），電腦上整個畫面
+    <section className="la-fade-in fixed inset-0 z-30 overflow-hidden bg-[#1E1E24]" aria-live="polite">
+      <div className="absolute inset-x-0 top-0 h-[80%] lg:h-full">
         {ASSETS.doors.map((src, i) => (
           <img
             key={src}
@@ -1266,16 +1267,23 @@ function Opening({ name, theme }) {
             alt={i === 2 ? "若失公寓的門打開了" : ""}
             width="900"
             height="640"
-            className={`absolute inset-0 h-full w-full select-none object-cover transition-opacity duration-300 ${
+            className={`absolute inset-0 h-full w-full select-none object-cover object-[50%_30%] transition-opacity duration-300 ${
               frame === i ? "opacity-100" : "opacity-0"
             }`}
             draggable="false"
           />
         ))}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(9,9,11,0.55))]" />
+        {/* 畫面邊緣微暗、底部漸漸融進背景，讓文字清楚 */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_60%,rgba(9,9,11,0.45))]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#1E1E24] to-transparent" />
       </div>
-      <p className="text-lg text-zinc-200">進入若失公寓⋯⋯</p>
-      <p className="mt-2 text-sm text-zinc-500">正在為 {name} 尋找共鳴的房間</p>
+      <div
+        className="absolute inset-x-0 bottom-0 px-6 text-center"
+        style={{ paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom))" }}
+      >
+        <p className="text-xl text-zinc-50 drop-shadow lg:text-2xl">進入若失公寓⋯⋯</p>
+        <p className="mt-2 text-sm text-zinc-300 drop-shadow lg:text-base">正在為 {name} 尋找共鳴的房間</p>
+      </div>
     </section>
   );
 }
@@ -1930,8 +1938,8 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
         <p className="text-center text-sm tracking-[0.2em] text-zinc-400">{name}，你來到若失公寓了</p>
       </div>
 
-      {/* 分頁列：你的房間／支持（置中、捲動時黏在上方） */}
-      <div className="sticky top-0 z-30 mb-4 mt-2 flex justify-center lg:col-span-12 lg:mb-10 lg:mt-4" style={{ paddingTop: "max(0.5rem, env(safe-area-inset-top))" }}>
+      {/* 分頁列：你的房間／支持（置中，寬度和下方內容框一樣） */}
+      <div className="mb-5 mt-4 flex justify-center lg:col-span-12 lg:mb-10">
         <ResultTabs tab={tab} onTab={switchTab} theme={t} />
       </div>
 
@@ -2088,7 +2096,7 @@ function ResultTabs({ tab, onTab, theme }) {
     <nav
       role="tablist"
       aria-label="結果頁分頁"
-      className="grid w-[15rem] grid-cols-2 gap-1 rounded-full border border-white/10 bg-zinc-950/95 p-1 shadow-lg shadow-black/40 backdrop-blur-md"
+      className="grid w-full max-w-xl grid-cols-2 gap-1 rounded-full border border-white/10 bg-zinc-950/95 p-1 shadow-lg shadow-black/40 backdrop-blur-md"
     >
       {RESULT_TABS.map(({ id, label }) => (
         <button
@@ -2097,7 +2105,7 @@ function ResultTabs({ tab, onTab, theme }) {
           role="tab"
           aria-selected={(tab === "others" ? "room" : tab) === id}
           onClick={() => onTab(id)}
-          className={`whitespace-nowrap rounded-full px-2 py-2 text-sm outline-none transition focus-visible:ring-2 focus-visible:ring-white/60 ${
+          className={`whitespace-nowrap rounded-full px-2 py-2.5 text-sm outline-none transition focus-visible:ring-2 focus-visible:ring-white/60 ${
             (tab === "others" ? "room" : tab) === id ? `font-medium ${theme.btn}` : "text-zinc-400 hover:text-zinc-100"
           }`}
         >
