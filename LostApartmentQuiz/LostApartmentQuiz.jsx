@@ -1869,7 +1869,7 @@ function StoryModal({ story, theme, onClose, onTap = () => {} }) {
 }
 
 // ---------- 階段三：結算推薦卡片 ----------
-function Result({ name, resultKey, scores, answers, onRestart, onShare, shareState, onOpenGuide, onTap = () => {} }) {
+function Result({ name, resultKey, scores, answers, onRestart, onShare, shareState, onTap = () => {} }) {
   const [story, setStory] = useState({ open: false, busy: false, url: null, file: null, error: false });
   const c = CHARACTERS[resultKey];
   const t = c.theme;
@@ -1905,21 +1905,13 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
     if (window.scrollY > top) window.scrollTo({ top, behavior: "smooth" });
   };
 
-  // 入住須知／重新測驗
+  // 重新測驗（入住須知已在一開始讀過，這裡不再放）
   const utilityButtons = (
-    <div className="grid grid-cols-2 gap-3">
-      <button
-        type="button"
-        onClick={onOpenGuide}
-        className={`flex items-center justify-center gap-2 rounded-2xl border border-zinc-700 bg-zinc-900/60 px-4 py-3.5 text-zinc-200 transition ${t.hoverBorder}`}
-      >
-        <Compass className="h-4 w-4" />
-        入住須知
-      </button>
+    <div>
       <button
         type="button"
         onClick={onRestart}
-        className={`flex items-center justify-center gap-2 rounded-2xl border border-zinc-700 bg-zinc-900/60 px-4 py-3.5 text-zinc-200 transition ${t.hoverBorder}`}
+        className={`flex w-full items-center justify-center gap-2 rounded-2xl border border-zinc-700 bg-zinc-900/60 px-4 py-3.5 text-zinc-200 transition ${t.hoverBorder}`}
       >
         <RotateCcw className="h-4 w-4" />
         重新測驗
@@ -2387,11 +2379,6 @@ export default function LostApartmentQuiz() {
             onRestart={restart}
             onShare={share}
             shareState={shareState}
-            onOpenGuide={() => {
-              play("tap");
-              setGuideBeforeStart(false);
-              setGuideOpen(true);
-            }}
             onTap={() => play("tap")}
           />
         )}
