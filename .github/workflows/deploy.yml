@@ -1,6 +1,5 @@
-
 # 每次把修改推送到 main 分支，GitHub 會自動重新打包網站並發布到 GitHub Pages。
-# 也可以到倉庫的 Actions 頁面手動按「Run workflow」重新發布。
+# 網站的程式在 lost-apartment-quiz 資料夾裡，所以這裡指定在那個資料夾裡打包。
 name: Deploy to GitHub Pages
 
 on:
@@ -17,6 +16,10 @@ concurrency:
   group: 'pages'
   cancel-in-progress: true
 
+defaults:
+  run:
+    working-directory: lost-apartment-quiz
+
 jobs:
   deploy:
     environment:
@@ -31,6 +34,7 @@ jobs:
         with:
           node-version: lts/*
           cache: 'npm'
+          cache-dependency-path: lost-apartment-quiz/package-lock.json
       - name: Install dependencies
         run: npm ci
       - name: Build
@@ -40,7 +44,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
-          path: './dist'
+          path: './lost-apartment-quiz/dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
