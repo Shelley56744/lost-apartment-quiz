@@ -366,9 +366,10 @@ const QUESTIONS = [
   },
 ];
 
+// 每句拆成兩段：手機版在逗號後整段換行，不會只剩一兩個字掉到下一行
 const CLOSING_LINES = [
-  "心神不定的時候，好像丟了什麼，卻也好像正要生出新的自己。",
-  "這裡的每個房間，都只是某個時空裡正在尋找答案的切片。",
+  ["心神不定的時候，好像丟了什麼，", "卻也好像正要生出新的自己。"],
+  ["這裡的每個房間，", "都只是某個時空裡正在尋找答案的切片。"],
 ];
 
 // ---------- 計分：最高分者勝，平手隨機 ----------
@@ -1258,8 +1259,9 @@ function Opening({ name, theme }) {
 
   return (
     // 開門畫面盡量填滿整個螢幕：手機上圖佔上方約八成（保留招牌與門），電腦上整個畫面
-    <section className="la-fade-in fixed inset-0 z-30 overflow-hidden bg-[#1E1E24]" aria-live="polite">
-      <div className="absolute inset-x-0 top-0 h-[80%] lg:h-full">
+    <section className="la-fade-in fixed inset-0 z-30 flex flex-col justify-center overflow-hidden bg-[#1E1E24]" aria-live="polite">
+      {/* 手機：高度依螢幕寬度計算，讓整扇門完整、置中（不被裁到一邊）；電腦：鋪滿 */}
+      <div className="relative h-[min(80vh,145vw)] w-full shrink-0 lg:absolute lg:inset-0 lg:h-full">
         {ASSETS.doors.map((src, i) => (
           <img
             key={src}
@@ -1267,7 +1269,7 @@ function Opening({ name, theme }) {
             alt={i === 2 ? "若失公寓的門打開了" : ""}
             width="900"
             height="640"
-            className={`absolute inset-0 h-full w-full select-none object-cover object-[50%_30%] transition-opacity duration-300 ${
+            className={`absolute inset-0 h-full w-full select-none object-cover object-[52%_30%] transition-opacity duration-300 ${
               frame === i ? "opacity-100" : "opacity-0"
             }`}
             draggable="false"
@@ -1277,9 +1279,10 @@ function Opening({ name, theme }) {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_60%,rgba(9,9,11,0.45))]" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#1E1E24] to-transparent" />
       </div>
+      {/* 手機：文字緊接在門的下方；電腦：疊在畫面下方 */}
       <div
-        className="absolute inset-x-0 bottom-0 px-6 text-center"
-        style={{ paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom))" }}
+        className="relative -mt-6 px-6 text-center lg:absolute lg:inset-x-0 lg:bottom-0 lg:mt-0"
+        style={{ paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom))" }}
       >
         <p className="text-xl text-zinc-50 drop-shadow lg:text-2xl">進入若失公寓⋯⋯</p>
         <p className="mt-2 text-sm text-zinc-300 drop-shadow lg:text-base">正在為 {name} 尋找共鳴的房間</p>
@@ -1289,7 +1292,9 @@ function Opening({ name, theme }) {
 }
 
 // ---------- 入住須知 ----------
-function GuideModal({ open, onClose }) {
+// beforeStart：輸入暱稱、按「拉開門簾」後先讀入住須知，按「我知道了」才正式進入
+function GuideModal({ open, onClose, onConfirm, beforeStart = false }) {
+  const confirm = onConfirm || onClose;
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => e.key === "Escape" && onClose();
@@ -1309,7 +1314,7 @@ function GuideModal({ open, onClose }) {
     },
   ];
   return (
-    <div className="la-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm" onClick={onClose}>
+    <div className="la-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm" onClick={beforeStart ? undefined : onClose}>
       <div
         role="dialog"
         aria-modal="true"
@@ -1348,7 +1353,7 @@ function GuideModal({ open, onClose }) {
         </ul>
         <button
           type="button"
-          onClick={onClose}
+          onClick={confirm}
           className="mt-6 w-full rounded-2xl bg-zinc-100 py-3.5 font-medium text-zinc-900 transition hover:bg-white"
         >
           我知道了
@@ -1409,8 +1414,7 @@ function SupportCard({ theme, onTap = () => {} }) {
           aria-label="前往若失公寓 Instagram @lost.apt"
           className="flex w-full items-center justify-center gap-2 rounded-2xl border border-zinc-700 bg-zinc-950/40 px-5 py-3.5 text-zinc-100 transition hover:border-zinc-500"
         >
-          <InstagramGlyph className="h-5 w-5" />
-          <span className="whitespace-nowrap">@lost.apt</span>
+          Instagram
         </a>
       </div>
     </article>
@@ -1925,6 +1929,20 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
 
   return (
     <section ref={sectionRef} className="pb-10 pt-4 lg:grid lg:grid-cols-12 lg:gap-x-12 lg:pt-4">
+      {/* 看其他租客時：「回到你的房間」放在整頁最上面 */}
+      {tab === "others" && (
+        <div className="-mt-2 mb-3 lg:col-span-12">
+          <button
+            type="button"
+            onClick={() => switchTab("room")}
+            className="group -ml-1 flex items-center gap-1 rounded-full px-1 py-1 text-sm text-zinc-300 transition hover:text-white"
+          >
+            <ChevronLeft className="h-4 w-4 transition group-hover:-translate-x-0.5" />
+            回到你的房間
+          </button>
+        </div>
+      )}
+
       {/* 揭曉標題（手機、電腦都置中） */}
       <div className="la-fade-up flex flex-col items-center gap-1 lg:col-span-12">
         <img
@@ -1939,7 +1957,7 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
       </div>
 
       {/* 分頁列：你的房間／支持（置中，寬度和下方內容框一樣） */}
-      <div className="mb-5 mt-4 flex justify-center lg:col-span-12 lg:mb-10">
+      <div className="mb-5 mt-4 flex flex-col items-center lg:col-span-12 lg:mb-10">
         <ResultTabs tab={tab} onTab={switchTab} theme={t} />
       </div>
 
@@ -2012,15 +2030,6 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
       {/* 「你的房間」裡的下一頁：看看其他租客（分頁列仍停在「你的房間」） */}
       {tab === "others" && (
       <div key="others" className="la-fade-in space-y-6 lg:col-span-7">
-        <button
-          type="button"
-          onClick={() => switchTab("room")}
-          className="group -ml-1 flex items-center gap-1 rounded-full px-1 py-1 text-sm text-zinc-400 transition hover:text-zinc-100"
-        >
-          <ChevronLeft className="h-4 w-4 transition group-hover:-translate-x-0.5" />
-          回到你的房間
-        </button>
-
         {/* 看看其他租客：左右滑動 */}
         <OtherTenants others={others} onTap={onTap} />
 
@@ -2028,13 +2037,19 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
         <ExhibitionCard theme={t} />
 
         {/* 若失結語 */}
-        <div className="px-2 py-4 text-center">
+        <div className="py-4 text-center sm:px-2">
           <div className="mx-auto mb-6 h-px w-12 bg-zinc-700" />
-          {CLOSING_LINES.map((line, i) => (
-            <p key={i} className="leading-[2.2] text-zinc-400">
-              {line}
-            </p>
-          ))}
+          <div className="space-y-3 lg:space-y-0">
+            {CLOSING_LINES.map((parts, i) => (
+              <p key={i} className="text-[15px] leading-[2] text-zinc-400 max-[350px]:text-[14px] sm:text-base lg:leading-[2.2]">
+                {parts.map((part) => (
+                  <span key={part} className="inline-block">
+                    {part}
+                  </span>
+                ))}
+              </p>
+            ))}
+          </div>
           <img
             src={ASSETS.spiderYarn}
             alt="抱著毛線球的織蛛"
@@ -2109,7 +2124,7 @@ function ResultTabs({ tab, onTab, theme }) {
             (tab === "others" ? "room" : tab) === id ? `font-medium ${theme.btn}` : "text-zinc-400 hover:text-zinc-100"
           }`}
         >
-          {label}
+          {id === "room" && tab === "others" ? "租客房間" : label}
         </button>
       ))}
     </nav>
@@ -2139,6 +2154,7 @@ export default function LostApartmentQuiz() {
   const [locked, setLocked] = useState(false);
   const [resultKey, setResultKey] = useState(null);
   const [guideOpen, setGuideOpen] = useState(false);
+  const [guideBeforeStart, setGuideBeforeStart] = useState(false);
   const [shareState, setShareState] = useState("idle"); // idle | done | fail
   const timers = useRef([]);
   const [soundOn, setSoundOn] = useState(true);
@@ -2250,6 +2266,13 @@ export default function LostApartmentQuiz() {
     setSoundOn(next);
   };
 
+  // 拉開門簾 → 先跳出入住須知
+  const openGuideBeforeStart = () => {
+    play("tap");
+    setGuideBeforeStart(true);
+    setGuideOpen(true);
+  };
+
   const start = () => {
     setAnswers(Array(QUESTIONS.length).fill(null));
     setQIndex(0);
@@ -2347,7 +2370,7 @@ export default function LostApartmentQuiz() {
       <SpiderCursor />
 
       <main className="relative mx-auto w-full max-w-lg px-5 py-8 sm:py-12 md:max-w-3xl md:px-8 lg:max-w-6xl lg:px-12" style={{ paddingBottom: "calc(2rem + env(safe-area-inset-bottom))" }}>
-        {stage === "landing" && <Landing nickname={nickname} setNickname={setNickname} onStart={start} />}
+        {stage === "landing" && <Landing nickname={nickname} setNickname={setNickname} onStart={openGuideBeforeStart} />}
 
         {stage === "quiz" && (
           <Quiz name={displayName} qIndex={qIndex} answers={answers} onSelect={select} onBack={back} onNext={next} onSubmit={submit} locked={locked} />
@@ -2366,6 +2389,7 @@ export default function LostApartmentQuiz() {
             shareState={shareState}
             onOpenGuide={() => {
               play("tap");
+              setGuideBeforeStart(false);
               setGuideOpen(true);
             }}
             onTap={() => play("tap")}
@@ -2375,9 +2399,17 @@ export default function LostApartmentQuiz() {
 
       <GuideModal
         open={guideOpen}
+        beforeStart={guideBeforeStart}
         onClose={() => {
           play("tap");
           setGuideOpen(false);
+        }}
+        onConfirm={() => {
+          setGuideOpen(false);
+          if (guideBeforeStart) {
+            setGuideBeforeStart(false);
+            start();
+          } else play("tap");
         }}
       />
     </div>
