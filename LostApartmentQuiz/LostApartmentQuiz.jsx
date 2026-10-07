@@ -159,22 +159,15 @@ const CHARACTERS = {
     ],
     hashtags: ["#小說異世界vs現實生活", "#作家能當飯吃嗎", "#寫作"], // 依《角色介紹》：迷惘的點、興趣、個性
     theme: {
-      // 綠色：偏暗、帶點灰的翡翠綠，對應小說封面的顏色
-      text: "text-[#6BBF93]",
-      hex: "#5FAE85", // 限動圖片用的角色色
-      soft: "text-[#D5EBDD]/85",
-      border: "border-[#5FAE85]/40",
-      bgSoft: "bg-[#5FAE85]/15",
-      chip: "border-[#5FAE85]/45 bg-[#5FAE85]/15 text-[#9BD3B3]",
-      bar: "bg-[#5FAE85]",
-      glow: "bg-[#2F7A55]/35",
-      glow2: "bg-emerald-950/30",
-      photo: "from-[#2E6A4C]/80 via-zinc-950 to-zinc-950",
-      ring: "ring-[#5FAE85]/60",
-      btn: "bg-[#3F8F66] text-white hover:bg-[#4A9E74]",
+      // 若失公寓標準色・綠：#589D74
+      text: "text-[#589D74]",
+      hex: "#589D74", // 限動圖片用的角色色
+      border: "border-[#589D74]/45",
+      bar: "bg-[#589D74]",
+      btn: "bg-[#589D74] text-white hover:brightness-110",
       // 按鈕、圖示等互動介面
-      hoverBorder: "hover:border-[#5FAE85]/60",
-      iconBg: "bg-[#5FAE85]/15 text-[#9BD3B3]",
+      hoverBorder: "hover:border-[#589D74]/70",
+      iconBg: "bg-[#589D74]/15 text-[#589D74]",
     },
   },
   yuting: {
@@ -201,21 +194,15 @@ const CHARACTERS = {
     ],
     hashtags: ["#做遊戲", "#很多朋友", "#陽光外向好相處", "#家人的期待不是自己想做的"], // 依《角色介紹》：迷惘的點、興趣、個性
     theme: {
-      text: "text-blue-400",
-      hex: "#60a5fa", // 限動圖片用的角色色
-      soft: "text-blue-100/85",
-      border: "border-blue-400/40",
-      bgSoft: "bg-blue-400/15",
-      chip: "border-blue-400/40 bg-blue-400/15 text-blue-300",
-      bar: "bg-blue-400",
-      glow: "bg-blue-500/30",
-      glow2: "bg-sky-800/25",
-      photo: "from-blue-700/70 via-zinc-950 to-zinc-950",
-      ring: "ring-blue-400/60",
-      btn: "bg-blue-500 text-white hover:bg-blue-400",
+      // 若失公寓標準色・藍：#0086B6
+      text: "text-[#0086B6]",
+      hex: "#0086B6", // 限動圖片用的角色色
+      border: "border-[#0086B6]/45",
+      bar: "bg-[#0086B6]",
+      btn: "bg-[#0086B6] text-white hover:brightness-110",
       // 按鈕、圖示等互動介面
-      hoverBorder: "hover:border-blue-400/60",
-      iconBg: "bg-blue-400/15 text-blue-300",
+      hoverBorder: "hover:border-[#0086B6]/70",
+      iconBg: "bg-[#0086B6]/15 text-[#0086B6]",
     },
   },
   siyu: {
@@ -242,21 +229,15 @@ const CHARACTERS = {
     ],
     hashtags: ["#做少數的自決", "#聽中文歌", "#內斂安靜"], // 依《角色介紹》：迷惘的點、興趣、個性
     theme: {
-      text: "text-yellow-300",
-      hex: "#facc15", // 限動圖片用的角色色
-      soft: "text-yellow-100/85",
-      border: "border-yellow-400/40",
-      bgSoft: "bg-yellow-400/15",
-      chip: "border-yellow-400/40 bg-yellow-400/15 text-yellow-200",
-      bar: "bg-yellow-400",
-      glow: "bg-yellow-500/30",
-      glow2: "bg-amber-700/25",
-      photo: "from-yellow-700/70 via-zinc-950 to-zinc-950",
-      ring: "ring-yellow-400/60",
-      btn: "bg-yellow-400 text-zinc-950 hover:bg-yellow-300",
+      // 若失公寓標準色・橘：#FFA634
+      text: "text-[#FFA634]",
+      hex: "#FFA634", // 限動圖片用的角色色
+      border: "border-[#FFA634]/45",
+      bar: "bg-[#FFA634]",
+      btn: "bg-[#FFA634] text-[#1E1E24] hover:brightness-110",
       // 按鈕、圖示等互動介面
-      hoverBorder: "hover:border-yellow-400/60",
-      iconBg: "bg-yellow-400/15 text-yellow-300",
+      hoverBorder: "hover:border-[#FFA634]/70",
+      iconBg: "bg-[#FFA634]/15 text-[#FFA634]",
     },
   },
   muwei: {
@@ -283,21 +264,15 @@ const CHARACTERS = {
     ],
     hashtags: ["#在意他人的眼光", "#努力融入大群體", "#攝影", "#慢熱內向"], // 依《角色介紹》：迷惘的點、興趣、個性
     theme: {
-      text: "text-red-400",
-      hex: "#f87171", // 限動圖片用的角色色
-      soft: "text-red-100/85",
-      border: "border-red-400/40",
-      bgSoft: "bg-red-400/15",
-      chip: "border-red-400/40 bg-red-400/15 text-red-300",
-      bar: "bg-red-400",
-      glow: "bg-red-500/30",
-      glow2: "bg-rose-900/30",
-      photo: "from-red-700/70 via-zinc-950 to-zinc-950",
-      ring: "ring-red-400/60",
-      btn: "bg-red-500 text-white hover:bg-red-400",
+      // 若失公寓標準色・紅：#C84658
+      text: "text-[#C84658]",
+      hex: "#C84658", // 限動圖片用的角色色
+      border: "border-[#C84658]/45",
+      bar: "bg-[#C84658]",
+      btn: "bg-[#C84658] text-white hover:brightness-110",
       // 按鈕、圖示等互動介面
-      hoverBorder: "hover:border-red-400/60",
-      iconBg: "bg-red-400/15 text-red-300",
+      hoverBorder: "hover:border-[#C84658]/70",
+      iconBg: "bg-[#C84658]/15 text-[#C84658]",
     },
   },
 };
@@ -1090,13 +1065,13 @@ function Landing({ nickname, setNickname, onStart }) {
             e.preventDefault();
             submit();
           }}
-          className={`w-full rounded-2xl border ${tried && !ready ? "border-rose-300/70" : "border-zinc-700/70"} bg-zinc-900/60 px-5 py-4 text-lg text-zinc-100 placeholder-zinc-600 outline-none backdrop-blur transition focus:border-[#EDF1EC]/50 focus:ring-2 focus:ring-[#EDF1EC]/20`}
+          className={`w-full rounded-2xl border ${tried && !ready ? "border-[#C84658]/80" : "border-zinc-700/70"} bg-zinc-900/60 px-5 py-4 text-lg text-zinc-100 placeholder-zinc-600 outline-none backdrop-blur transition focus:border-[#EDF1EC]/50 focus:ring-2 focus:ring-[#EDF1EC]/20`}
         />
         {/* 平常不顯示；沒填就按按鈕時才出現紅色 ＊ 提醒 */}
-        <p id="nickname-hint" aria-live="polite" className={tried && !ready ? "-mt-1 flex items-center gap-1 pl-1 text-sm text-rose-300" : "sr-only"}>
+        <p id="nickname-hint" aria-live="polite" className={tried && !ready ? "-mt-1 flex items-center gap-1 pl-1 text-sm text-[#C84658]" : "sr-only"}>
           {tried && !ready && (
             <>
-              <span aria-hidden="true" className="text-base font-bold leading-none text-rose-400">*</span>
+              <span aria-hidden="true" className="text-base font-bold leading-none text-[#C84658]">*</span>
               請先填寫暱稱
             </>
           )}
@@ -1446,7 +1421,9 @@ function OtherTenants({ others, onTap = () => {} }) {
     cards.forEach((card, i) => {
       if (Math.abs(card.offsetLeft - el.offsetLeft - left) < Math.abs(cards[best].offsetLeft - el.offsetLeft - left)) best = i;
     });
-    setActive(best);
+    // 滑到底時最後一張卡沒辦法貼齊左邊，直接算成最後一位
+    if (left >= el.scrollWidth - el.clientWidth - 4) best = others.length - 1;
+    setActive(Math.min(best, others.length - 1));
   };
   const goTo = (i) => {
     const el = trackRef.current;
@@ -1807,7 +1784,7 @@ function StoryModal({ story, theme, onClose, onTap = () => {} }) {
         </div>
 
         {story.busy && <p className="py-16 text-center text-sm text-zinc-400">正在為你製作限動圖片⋯⋯</p>}
-        {story.error && <p className="py-16 text-center text-sm text-rose-300">圖片製作失敗，請重新整理後再試一次。</p>}
+        {story.error && <p className="py-16 text-center text-sm text-[#C84658]">圖片製作失敗，請重新整理後再試一次。</p>}
 
         {story.url && (
           <>
