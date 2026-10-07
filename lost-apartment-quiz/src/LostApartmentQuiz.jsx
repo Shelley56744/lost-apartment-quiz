@@ -1088,7 +1088,7 @@ function Landing({ nickname, setNickname, onStart }) {
           }`}
         >
           <DoorOpen className="h-5 w-5 transition group-hover:translate-x-0.5" />
-          拉開門簾
+          掀開門簾
         </button>
         </div>
       </div>
@@ -1264,7 +1264,7 @@ function Opening({ name, theme }) {
 }
 
 // ---------- 入住須知 ----------
-// beforeStart：輸入暱稱、按「拉開門簾」後先讀入住須知，按「我知道了」才正式進入
+// beforeStart：輸入暱稱、按「掀開門簾」後先讀入住須知，按「我知道了」才正式進入
 function GuideModal({ open, onClose, onConfirm, beforeStart = false }) {
   const confirm = onConfirm || onClose;
   useEffect(() => {
@@ -2232,7 +2232,7 @@ export default function LostApartmentQuiz() {
     setSoundOn(next);
   };
 
-  // 拉開門簾 → 先跳出入住須知
+  // 掀開門簾 → 先跳出入住須知
   const openGuideBeforeStart = () => {
     play("tap");
     setGuideBeforeStart(true);
