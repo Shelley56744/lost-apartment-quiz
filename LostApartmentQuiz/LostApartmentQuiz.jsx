@@ -1375,7 +1375,7 @@ function SupportCard({ theme, onTap = () => {} }) {
             className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-[#EDF1EC]/30 px-5 py-3.5 text-[#EDF1EC]/70"
           >
             <Clock className="h-4 w-4 shrink-0" />
-            <span className="whitespace-nowrap">募資計畫 10/7 正式上線</span>
+            <span className="whitespace-nowrap">募資計畫即將上線</span>
           </div>
         )}
         <a
