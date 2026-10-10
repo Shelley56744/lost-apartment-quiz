@@ -454,6 +454,17 @@ const LINKS = {
   instagram: "https://www.instagram.com/lost.apt/",
 };
 
+// ---------- Google Analytics 事件追蹤 ----------
+// 評估 ID 填在 index.html 的 GA_ID；沒填時這裡什麼都不會送出。
+// 在 GA 後台「報表 → 參與度 → 事件」可以看到下面這些事件名稱與次數。
+function track(name, params = {}) {
+  try {
+    if (typeof window !== "undefined" && typeof window.gtag === "function") window.gtag("event", name, params);
+  } catch (_) {
+    /* 追蹤失敗不影響測驗 */
+  }
+}
+
 // ---------- 聲音 ----------
 // 預設由瀏覽器即時合成（Web Audio API），不需要任何音檔。
 // 若之後有正式配樂，把網址填進來即可改用音檔循環播放：calm = 玄關／結算，mystery = 測驗中
@@ -1360,7 +1371,10 @@ function SupportCard({ theme, onTap = () => {} }) {
         {live ? (
           <a
             href={LINKS.crowdfunding}
-            onClick={onTap}
+            onClick={() => {
+              onTap();
+              track("click_crowdfunding", { link_url: LINKS.crowdfunding });
+            }}
             target="_blank"
             rel="noopener noreferrer"
             className={`flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3.5 font-medium transition active:scale-[0.99] ${theme.btn}`}
@@ -1380,7 +1394,10 @@ function SupportCard({ theme, onTap = () => {} }) {
         )}
         <a
           href={LINKS.instagram}
-          onClick={onTap}
+          onClick={() => {
+            onTap();
+            track("click_instagram", { link_url: LINKS.instagram });
+          }}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="前往若失公寓 Instagram @lost.apt"
@@ -1746,11 +1763,13 @@ function StoryModal({ story, theme, onClose, onTap = () => {} }) {
   const share = async () => {
     try {
       await navigator.share({ files: [story.file] });
+      track("story_share");
     } catch (_) {
       /* 使用者取消或不支援 */
     }
   };
   const download = () => {
+    track("story_download");
     const a = document.createElement("a");
     a.href = story.url;
     a.download = story.file.name;
@@ -1849,6 +1868,7 @@ function Result({ name, resultKey, scores, answers, onRestart, onShare, shareSta
   const t = c.theme;
   const openStory = async () => {
     onTap();
+    track("story_open", { result: resultKey });
     setStory({ open: true, busy: true, url: null, file: null, error: false });
     try {
       const blob = await renderStoryImage({ name, c });
@@ -2245,6 +2265,7 @@ export default function LostApartmentQuiz() {
     setResultKey(null);
     setShareState("idle");
     play("key");
+    track("quiz_start");
     setStage("quiz");
   };
 
@@ -2266,7 +2287,9 @@ export default function LostApartmentQuiz() {
   const submit = () => {
     if (locked || answers.some((a) => !a)) return;
     setLocked(true);
-    setResultKey(pickResult(tallyScores(answers)));
+    const picked = pickResult(tallyScores(answers));
+    setResultKey(picked);
+    track("quiz_complete", { result: picked });
     setStage("opening");
     play("door");
     later(() => {
@@ -2323,7 +2346,9 @@ export default function LostApartmentQuiz() {
         if (err && err.name === "AbortError") return;
       }
     }
+    const method = ok ? "native" : "copy";
     if (!ok) ok = await copyText(text);
+    if (ok) track("share_result", { method, result: resultKey });
     setShareState(ok ? "done" : "fail");
     later(() => setShareState("idle"), 2600);
   };

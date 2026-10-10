@@ -11,6 +11,20 @@
     <meta property="og:type" content="website" />
     <link rel="icon" type="image/png" href="./favicon.png" />
     <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <!-- Google Analytics：把 G-XXXXXXXXXX 換成你在 GA 後台拿到的「評估 ID」，沒換之前不會載入 -->
+    <script>
+      window.GA_ID = "G-SFCHKQ32JZ";
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      if (!/X{4,}/.test(window.GA_ID)) {
+        var ga = document.createElement("script");
+        ga.async = true;
+        ga.src = "https://www.googletagmanager.com/gtag/js?id=" + window.GA_ID;
+        document.head.appendChild(ga);
+        gtag("js", new Date());
+        gtag("config", window.GA_ID);
+      }
+    </script>
   </head>
   <body style="margin: 0; background: #1e1e24">
     <div id="root"></div>
