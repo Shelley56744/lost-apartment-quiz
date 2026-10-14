@@ -450,7 +450,7 @@ const EVENT = {
 };
 
 const LINKS = {
-  crowdfunding: "",
+  crowdfunding: "https://www.zeczec.com/projects/lost-apt",
   instagram: "https://www.instagram.com/lost.apt/",
 };
 
