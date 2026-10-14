@@ -1379,8 +1379,7 @@ function SupportCard({ theme, onTap = () => {} }) {
             rel="noopener noreferrer"
             className={`flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3.5 font-medium transition active:scale-[0.99] ${theme.btn}`}
           >
-            <HeartHandshake className="h-5 w-5" />
-            前往募資平台支持我們
+            前往募資平台
             <ExternalLink className="h-4 w-4 opacity-70" />
           </a>
         ) : (
